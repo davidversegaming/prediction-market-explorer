@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-const POLYMARKET_API_URL = 'https://gamma-api.polymarket.com';
-
 export interface Market {
   id: string;
   slug: string;
@@ -39,15 +37,7 @@ interface PolymarketApiResponse {
 export const polymarketService = {
   async getMarkets(): Promise<Market[]> {
     try {
-      const response = await axios.get<PolymarketApiResponse>(`${POLYMARKET_API_URL}/events`, {
-        params: {
-          limit: 50,
-          order: 'volume',
-          ascending: false,
-          active: true,
-          closed: false
-        }
-      });
+      const response = await axios.get<PolymarketApiResponse>('/api/markets');
 
       return response.data.results.map((market) => ({
         id: market.id,
