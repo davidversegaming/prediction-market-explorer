@@ -79,15 +79,15 @@ export const polymarketService = {
     }
   },
 
-  async getEventBySlug(slug: string): Promise<Event | null> {
-    if (!slug) {
-      throw new Error('Slug is required');
+  async getEventById(eventId: string): Promise<Event | null> {
+    if (!eventId) {
+      throw new Error('Event ID is required');
     }
 
     try {
       const response = await axios.get('/api/proxy', {
         params: {
-          path: `/events/${slug}`
+          path: `/events/${eventId}`
         }
       });
 
