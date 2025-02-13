@@ -47,13 +47,18 @@ function MarketsList() {
           className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
         >
           {market.image && (
-            <div className="w-full h-48 relative">
+            <div className="w-full h-48 relative bg-gray-100">
               <Image
                 src={market.image}
                 alt={market.title}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                onError={(e) => {
+                  // Remove the image on error
+                  const imgElement = e.target as HTMLImageElement;
+                  imgElement.style.display = 'none';
+                }}
               />
             </div>
           )}
