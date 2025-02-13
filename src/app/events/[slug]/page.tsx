@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { polymarketService, Event, Market } from '@/services/polymarket';
+import { Event, Market } from '@/services/polymarket';
 import { format } from 'date-fns';
 import { ChartBarIcon, BeakerIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
@@ -109,7 +109,11 @@ function EventDetails() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const data = await polymarketService.getEventBySlug(params.slug as string);
+        const response = await fetch(`/api/events/${params.slug}`);
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+        const data = await response.json();
         setEvent(data);
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Failed to load event details';
