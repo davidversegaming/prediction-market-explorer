@@ -12,11 +12,23 @@ export interface Market {
   imageHash?: string;
 }
 
+interface PolymarketApiResponse {
+  markets: {
+    id: string;
+    question: string;
+    description?: string;
+    volume?: string;
+    lastPrice?: string;
+    expiresAt: string;
+    imageHash?: string;
+  }[];
+}
+
 export const polymarketService = {
   async getMarkets(): Promise<Market[]> {
     try {
-      const response = await axios.get(`${POLYMARKET_API_URL}/markets`);
-      return response.data.markets.map((market: any) => ({
+      const response = await axios.get<PolymarketApiResponse>(`${POLYMARKET_API_URL}/markets`);
+      return response.data.markets.map((market) => ({
         id: market.id,
         question: market.question,
         description: market.description || '',
