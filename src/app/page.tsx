@@ -8,6 +8,18 @@ import Image from 'next/image';
 
 const queryClient = new QueryClient();
 
+const formatDate = (dateString: string) => {
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return 'Date not available';
+    }
+    return format(date, 'PPP');
+  } catch {
+    return 'Date not available';
+  }
+};
+
 function MarketsList() {
   const { data: markets, isLoading, error } = useMarkets();
 
@@ -120,8 +132,8 @@ function MarketsList() {
               </div>
             )}
             <div className="mt-4 space-y-1 text-sm text-gray-500">
-              <p>Starts: {format(new Date(market.startDate), 'PPP')}</p>
-              <p>Ends: {format(new Date(market.endDate), 'PPP')}</p>
+              <p>Starts: {formatDate(market.startDate)}</p>
+              <p>Ends: {formatDate(market.endDate)}</p>
             </div>
           </div>
         </div>
