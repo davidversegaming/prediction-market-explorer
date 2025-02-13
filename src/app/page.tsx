@@ -33,6 +33,15 @@ function MarketsList() {
           key={market.id}
           className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
         >
+          {market.image && (
+            <div className="w-full h-48 relative">
+              <img
+                src={market.image}
+                alt={market.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
           <div className="p-6">
             <div className="flex items-center gap-2 mb-3">
               {market.status.active && (
@@ -45,9 +54,14 @@ function MarketsList() {
                   Closed
                 </span>
               )}
+              {market.category && (
+                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                  {market.category}
+                </span>
+              )}
             </div>
             <h3 className="text-xl font-semibold mb-2 text-gray-800">
-              {market.question}
+              {market.title}
             </h3>
             <p className="text-gray-600 mb-4 line-clamp-2">
               {market.description}
@@ -57,27 +71,45 @@ function MarketsList() {
                 <ChartBarIcon className="h-4 w-4 text-gray-500" />
                 <div>
                   <p className="text-gray-500">Volume</p>
-                  <p className="font-semibold">${Number(market.volume).toLocaleString()}</p>
+                  <p className="font-semibold">${market.volume.toLocaleString()}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <BeakerIcon className="h-4 w-4 text-gray-500" />
                 <div>
                   <p className="text-gray-500">Liquidity</p>
-                  <p className="font-semibold">${Number(market.liquidity).toLocaleString()}</p>
+                  <p className="font-semibold">${market.liquidity.toLocaleString()}</p>
                 </div>
               </div>
             </div>
-            {market.tags.length > 0 && (
+            {market.markets?.[0] && (
+              <div className="space-y-2 mb-4">
+                <p className="text-sm font-medium text-gray-700">Outcomes:</p>
+                <div className="flex flex-wrap gap-2">
+                  {JSON.parse(market.markets[0].outcomes).map((outcome: string, index: number) => {
+                    const prices = JSON.parse(market.markets[0].outcomePrices);
+                    return (
+                      <span
+                        key={index}
+                        className="flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                      >
+                        {outcome}: {(Number(prices[index]) * 100).toFixed(1)}%
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            {market.tags && market.tags.length > 0 && (
               <div className="space-y-2">
                 <div className="flex flex-wrap gap-2">
-                  {market.tags.map((tag, index) => (
+                  {market.tags.map((tag) => (
                     <span
-                      key={index}
+                      key={tag.id}
                       className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-sm"
                     >
                       <TagIcon className="h-3 w-3" />
-                      {tag}
+                      {tag.label}
                     </span>
                   ))}
                 </div>

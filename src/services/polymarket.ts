@@ -3,53 +3,57 @@ import axios from 'axios';
 export interface Market {
   id: string;
   slug: string;
-  question: string;
+  title: string;
   description: string;
-  volume: string;
-  liquidity: string;
+  volume: number;
+  liquidity: number;
   startDate: string;
   endDate: string;
-  tags: string[];
+  category: string;
+  image?: string;
+  active: boolean;
+  closed: boolean;
   status: {
     active: boolean;
     closed: boolean;
   };
+  markets?: Array<{
+    outcomes: string;
+    outcomePrices: string;
+  }>;
+  tags: Array<{
+    id: string;
+    label: string;
+    slug: string;
+  }>;
 }
 
-interface PolymarketApiResponse {
-  results: {
-    id: string;
-    slug: string;
-    title: string;
-    description: string;
-    volume: string;
-    liquidity: string;
-    start_date: string;
-    end_date: string;
-    tags: Array<{ label: string }>;
-    status: {
-      active: boolean;
-      closed: boolean;
-    };
-  }[];
-}
+interface PolymarketApiResponse extends Array<Market> {}
 
 export const polymarketService = {
   async getMarkets(): Promise<Market[]> {
     try {
       const response = await axios.get<PolymarketApiResponse>('/api/markets');
-
-      return response.data.results.map((market) => ({
+      
+      return response.data.map((market) => ({
         id: market.id,
         slug: market.slug,
-        question: market.title,
+        title: market.title,
         description: market.description,
-        volume: market.volume,
-        liquidity: market.liquidity,
-        startDate: market.start_date,
-        endDate: market.end_date,
-        tags: market.tags.map(tag => tag.label),
-        status: market.status
+        volume: Number(market.volume) || 0,
+        liquidity: Number(market.liquidity) || 0,
+        startDate: market.startDate,
+        endDate: market.endDate,
+        category: market.category || '',
+        image: market.image,
+        active: market.active,
+        closed: market.closed,
+        status: {
+          active: market.active,
+          closed: market.closed
+        },
+        markets: market.markets,
+        tags: market.tags
       }));
     } catch (error) {
       console.error('Error fetching markets:', error);
