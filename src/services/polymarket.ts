@@ -21,6 +21,11 @@ export interface Market {
   bestBid: number;
   bestAsk: number;
   lastTradePrice: number;
+  tags?: Array<{
+    id: string;
+    label: string;
+    slug: string;
+  }>;
 }
 
 export interface Event {

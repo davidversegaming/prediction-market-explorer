@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { polymarketService, Market } from '@/services/polymarket';
+import { polymarketService, Event } from '@/services/polymarket';
 
 export function useMarkets() {
-  return useQuery<Market[]>({
+  return useQuery<Event[]>({
     queryKey: ['markets'],
-    queryFn: () => polymarketService.getMarkets(),
+    queryFn: () => polymarketService.getEvents(),
     refetchInterval: 30000, // Refetch every 30 seconds
   });
 } 
