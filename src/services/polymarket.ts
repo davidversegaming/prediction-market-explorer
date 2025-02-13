@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-const POLYMARKET_API_URL = 'https://gamma-api.polymarket.com';
-
 export interface Market {
   id: string;
   question: string;
@@ -56,17 +54,14 @@ export interface Event {
 export const polymarketService = {
   async getEvents(): Promise<Event[]> {
     try {
-      const response = await axios.get(`${POLYMARKET_API_URL}/events`, {
+      const response = await axios.get('/api/proxy', {
         params: {
+          path: '/events',
           limit: 50,
           order: 'volume',
           ascending: false,
           active: true,
           closed: false
-        },
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
         }
       });
       return response.data;
@@ -78,10 +73,9 @@ export const polymarketService = {
 
   async getEventBySlug(slug: string): Promise<Event | null> {
     try {
-      const response = await axios.get(`${POLYMARKET_API_URL}/events/${slug}`, {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
+      const response = await axios.get('/api/proxy', {
+        params: {
+          path: `/events/${slug}`
         }
       });
       return response.data;
