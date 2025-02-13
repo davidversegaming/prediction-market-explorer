@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useMarkets } from '@/hooks/useMarkets';
 import { format } from 'date-fns';
 import { TagIcon, ChartBarIcon, BeakerIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 
 const queryClient = new QueryClient();
 
@@ -35,10 +36,12 @@ function MarketsList() {
         >
           {market.image && (
             <div className="w-full h-48 relative">
-              <img
+              <Image
                 src={market.image}
                 alt={market.title}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </div>
           )}

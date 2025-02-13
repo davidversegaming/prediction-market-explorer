@@ -28,7 +28,7 @@ export interface Market {
   }>;
 }
 
-interface PolymarketApiResponse extends Array<Market> {}
+type PolymarketApiResponse = Market[];
 
 export const polymarketService = {
   async getMarkets(): Promise<Market[]> {
