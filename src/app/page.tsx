@@ -82,21 +82,22 @@ function MarketsList() {
                 </div>
               </div>
             </div>
-            {market.markets?.[0] && (
+            {market.markets?.[0] && market.markets[0].outcomes && (
               <div className="space-y-2 mb-4">
                 <p className="text-sm font-medium text-gray-700">Outcomes:</p>
                 <div className="flex flex-wrap gap-2">
-                  {JSON.parse(market.markets[0].outcomes).map((outcome: string, index: number) => {
+                  {(() => {
+                    const outcomes = JSON.parse(market.markets[0].outcomes);
                     const prices = JSON.parse(market.markets[0].outcomePrices);
-                    return (
+                    return outcomes.map((outcome: string, index: number) => (
                       <span
                         key={index}
                         className="flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
                       >
                         {outcome}: {(Number(prices[index]) * 100).toFixed(1)}%
                       </span>
-                    );
-                  })}
+                    ));
+                  })()}
                 </div>
               </div>
             )}
