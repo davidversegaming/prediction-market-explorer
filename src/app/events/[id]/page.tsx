@@ -116,7 +116,7 @@ function EventDetails() {
       }
 
       try {
-        const data = await polymarketService.getEventBySlug(params.id as string);
+        const data = await polymarketService.getEventById(params.id as string);
         if (!data) {
           throw new Error('Event not found');
         }
