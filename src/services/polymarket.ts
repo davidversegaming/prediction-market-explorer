@@ -17,6 +17,8 @@ export interface Market {
     active: boolean;
     closed: boolean;
   };
+  outcomes?: string;
+  outcomePrices?: string;
   markets?: Array<{
     outcomes: string;
     outcomePrices: string;
@@ -52,6 +54,8 @@ export const polymarketService = {
           active: market.active,
           closed: market.closed
         },
+        outcomes: market.outcomes,
+        outcomePrices: market.outcomePrices,
         markets: market.markets,
         tags: market.tags
       }));

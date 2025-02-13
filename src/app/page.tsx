@@ -55,7 +55,6 @@ function MarketsList() {
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 onError={(e) => {
-                  // Remove the image on error
                   const imgElement = e.target as HTMLImageElement;
                   imgElement.style.display = 'none';
                 }}
@@ -102,23 +101,36 @@ function MarketsList() {
                 </div>
               </div>
             </div>
-            {market.markets?.[0] && market.markets[0].outcomes && (
-              <div className="space-y-2 mb-4">
-                <p className="text-sm font-medium text-gray-700">Outcomes:</p>
-                <div className="flex flex-wrap gap-2">
-                  {(() => {
-                    try {
-                      // The strings are already JSON encoded, so we parse them directly
-                      const outcomes = JSON.parse(market.markets[0].outcomes);
-                      const prices = JSON.parse(market.markets[0].outcomePrices);
-                      
-                      if (!Array.isArray(outcomes) || !Array.isArray(prices)) {
-                        return <span className="text-gray-500">No outcomes available</span>;
-                      }
+            {(() => {
+              try {
+                // Try to get outcomes from direct fields first
+                let outcomesStr = market.outcomes;
+                let pricesStr = market.outcomePrices;
 
-                      return outcomes.map((outcome: string, index: number) => {
+                // If not available, try to get from nested markets
+                if (!outcomesStr && market.markets?.[0]) {
+                  outcomesStr = market.markets[0].outcomes;
+                  pricesStr = market.markets[0].outcomePrices;
+                }
+
+                // If we still don't have outcomes, return null
+                if (!outcomesStr || !pricesStr) {
+                  return null;
+                }
+
+                const outcomes = JSON.parse(outcomesStr);
+                const prices = JSON.parse(pricesStr);
+
+                if (!Array.isArray(outcomes) || !Array.isArray(prices)) {
+                  return null;
+                }
+
+                return (
+                  <div className="space-y-2 mb-4">
+                    <p className="text-sm font-medium text-gray-700">Outcomes:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {outcomes.map((outcome: string, index: number) => {
                         const price = Number(prices[index] || 0);
-                        // Convert scientific notation to percentage
                         const percentage = (price * 100).toLocaleString(undefined, {
                           maximumFractionDigits: 2,
                           minimumFractionDigits: 1
@@ -132,15 +144,15 @@ function MarketsList() {
                             {outcome}: {percentage}%
                           </span>
                         );
-                      });
-                    } catch (error) {
-                      console.error('Error parsing outcomes:', error);
-                      return <span className="text-gray-500">Error loading outcomes</span>;
-                    }
-                  })()}
-                </div>
-              </div>
-            )}
+                      })}
+                    </div>
+                  </div>
+                );
+              } catch (error) {
+                console.error('Error parsing outcomes:', error);
+                return null;
+              }
+            })()}
             {market.tags && market.tags.length > 0 && (
               <div className="space-y-2">
                 <div className="flex flex-wrap gap-2">
