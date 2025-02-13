@@ -102,16 +102,25 @@ function MarketsList() {
                 <p className="text-sm font-medium text-gray-700">Outcomes:</p>
                 <div className="flex flex-wrap gap-2">
                   {(() => {
-                    const outcomes = JSON.parse(market.markets[0].outcomes);
-                    const prices = JSON.parse(market.markets[0].outcomePrices);
-                    return outcomes.map((outcome: string, index: number) => (
-                      <span
-                        key={index}
-                        className="flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
-                      >
-                        {outcome}: {(Number(prices[index]) * 100).toFixed(1)}%
-                      </span>
-                    ));
+                    try {
+                      const outcomes = JSON.parse(market.markets[0].outcomes || '[]');
+                      const prices = JSON.parse(market.markets[0].outcomePrices || '[]');
+                      
+                      if (!Array.isArray(outcomes) || !Array.isArray(prices)) {
+                        return <span className="text-gray-500">No outcomes available</span>;
+                      }
+
+                      return outcomes.map((outcome: string, index: number) => (
+                        <span
+                          key={index}
+                          className="flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                        >
+                          {outcome}: {(Number(prices[index] || 0) * 100).toFixed(1)}%
+                        </span>
+                      ));
+                    } catch (error) {
+                      return <span className="text-gray-500">Error loading outcomes</span>;
+                    }
                   })()}
                 </div>
               </div>
