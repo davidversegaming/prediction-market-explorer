@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const POLYMARKET_API_URL = 'https://gamma-api.polymarket.com';
+
 export interface Market {
   id: string;
   question: string;
@@ -54,7 +56,19 @@ export interface Event {
 export const polymarketService = {
   async getEvents(): Promise<Event[]> {
     try {
-      const response = await axios.get('/api/markets');
+      const response = await axios.get(`${POLYMARKET_API_URL}/events`, {
+        params: {
+          limit: 50,
+          order: 'volume',
+          ascending: false,
+          active: true,
+          closed: false
+        },
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        }
+      });
       return response.data;
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -64,7 +78,12 @@ export const polymarketService = {
 
   async getEventBySlug(slug: string): Promise<Event | null> {
     try {
-      const response = await axios.get(`/api/events/${slug}`);
+      const response = await axios.get(`${POLYMARKET_API_URL}/events/${slug}`, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        }
+      });
       return response.data;
     } catch (error) {
       console.error('Error fetching event:', error);

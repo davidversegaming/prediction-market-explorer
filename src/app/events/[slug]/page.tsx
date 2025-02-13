@@ -6,6 +6,7 @@ import { Event, Market } from '@/services/polymarket';
 import { format } from 'date-fns';
 import { ChartBarIcon, BeakerIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
+import { polymarketService } from '@/services/polymarket';
 
 function MarketCard({ market }: { market: Market }) {
   const formatPercentage = (priceStr: string) => {
@@ -109,11 +110,10 @@ function EventDetails() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await fetch(`/api/events/${params.slug}`);
-        if (!response.ok) {
-          throw new Error(response.statusText);
+        const data = await polymarketService.getEventBySlug(params.slug as string);
+        if (!data) {
+          throw new Error('Event not found');
         }
-        const data = await response.json();
         setEvent(data);
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Failed to load event details';
