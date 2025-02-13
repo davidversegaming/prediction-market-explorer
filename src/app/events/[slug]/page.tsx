@@ -109,15 +109,22 @@ function EventDetails() {
 
   useEffect(() => {
     const fetchEvent = async () => {
+      if (!params.slug) {
+        setError('Event ID is required');
+        setLoading(false);
+        return;
+      }
+
       try {
         const data = await polymarketService.getEventBySlug(params.slug as string);
         if (!data) {
           throw new Error('Event not found');
         }
         setEvent(data);
+        setError(null);
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Failed to load event details';
-        setError(message);
+        console.error('Error loading event:', error);
+        setError(error instanceof Error ? error.message : 'Failed to load event details');
       } finally {
         setLoading(false);
       }

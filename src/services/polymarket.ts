@@ -64,24 +64,44 @@ export const polymarketService = {
           closed: false
         }
       });
+
+      if (!response.data) {
+        throw new Error('No data received from API');
+      }
+
       return response.data;
     } catch (error) {
       console.error('Error fetching events:', error);
-      return [];
+      if (axios.isAxiosError(error) && error.response?.data?.error) {
+        throw new Error(error.response.data.error);
+      }
+      throw new Error('Failed to fetch events');
     }
   },
 
   async getEventBySlug(slug: string): Promise<Event | null> {
+    if (!slug) {
+      throw new Error('Slug is required');
+    }
+
     try {
       const response = await axios.get('/api/proxy', {
         params: {
           path: `/events/${slug}`
         }
       });
+
+      if (!response.data) {
+        throw new Error('Event not found');
+      }
+
       return response.data;
     } catch (error) {
       console.error('Error fetching event:', error);
-      return null;
+      if (axios.isAxiosError(error) && error.response?.data?.error) {
+        throw new Error(error.response.data.error);
+      }
+      throw new Error('Failed to fetch event');
     }
   }
 }; 
