@@ -103,22 +103,33 @@ function MarketsList() {
                 <div className="flex flex-wrap gap-2">
                   {(() => {
                     try {
-                      const outcomes = JSON.parse(market.markets[0].outcomes || '[]');
-                      const prices = JSON.parse(market.markets[0].outcomePrices || '[]');
+                      // The strings are already JSON encoded, so we parse them directly
+                      const outcomes = JSON.parse(market.markets[0].outcomes);
+                      const prices = JSON.parse(market.markets[0].outcomePrices);
                       
                       if (!Array.isArray(outcomes) || !Array.isArray(prices)) {
                         return <span className="text-gray-500">No outcomes available</span>;
                       }
 
-                      return outcomes.map((outcome: string, index: number) => (
-                        <span
-                          key={index}
-                          className="flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
-                        >
-                          {outcome}: {(Number(prices[index] || 0) * 100).toFixed(1)}%
-                        </span>
-                      ));
+                      return outcomes.map((outcome: string, index: number) => {
+                        const price = Number(prices[index] || 0);
+                        // Convert scientific notation to percentage
+                        const percentage = (price * 100).toLocaleString(undefined, {
+                          maximumFractionDigits: 2,
+                          minimumFractionDigits: 1
+                        });
+
+                        return (
+                          <span
+                            key={index}
+                            className="flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                          >
+                            {outcome}: {percentage}%
+                          </span>
+                        );
+                      });
                     } catch (error) {
+                      console.error('Error parsing outcomes:', error);
                       return <span className="text-gray-500">Error loading outcomes</span>;
                     }
                   })()}
