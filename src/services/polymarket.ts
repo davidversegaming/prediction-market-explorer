@@ -2,27 +2,43 @@ import axios from 'axios';
 
 export interface Market {
   id: string;
-  slug: string;
-  title: string;
+  question: string;
   description: string;
-  volume: number;
-  liquidity: number;
+  image?: string;
+  icon?: string;
+  outcomes: string;
+  outcomePrices: string;
+  volume: string;
+  liquidity: string;
+  active: boolean;
+  closed: boolean;
   startDate: string;
   endDate: string;
   category: string;
+  volumeNum: number;
+  liquidityNum: number;
+  marketType: string;
+  bestBid: number;
+  bestAsk: number;
+  lastTradePrice: number;
+}
+
+export interface Event {
+  id: string;
+  ticker: string;
+  slug: string;
+  title: string;
+  description: string;
   image?: string;
+  icon?: string;
+  category?: string;
+  volume: number;
+  liquidity: number;
   active: boolean;
   closed: boolean;
-  status: {
-    active: boolean;
-    closed: boolean;
-  };
-  outcomes?: string;
-  outcomePrices?: string;
-  markets?: Array<{
-    outcomes: string;
-    outcomePrices: string;
-  }>;
+  startDate: string;
+  endDate: string;
+  markets: Market[];
   tags: Array<{
     id: string;
     label: string;
@@ -30,38 +46,24 @@ export interface Market {
   }>;
 }
 
-type PolymarketApiResponse = Market[];
-
 export const polymarketService = {
-  async getMarkets(): Promise<Market[]> {
+  async getEvents(): Promise<Event[]> {
     try {
-      const response = await axios.get<PolymarketApiResponse>('/api/markets');
-      
-      return response.data.map((market) => ({
-        id: market.id,
-        slug: market.slug,
-        title: market.title,
-        description: market.description,
-        volume: Number(market.volume) || 0,
-        liquidity: Number(market.liquidity) || 0,
-        startDate: market.startDate,
-        endDate: market.endDate,
-        category: market.category || '',
-        image: market.image,
-        active: market.active,
-        closed: market.closed,
-        status: {
-          active: market.active,
-          closed: market.closed
-        },
-        outcomes: market.outcomes,
-        outcomePrices: market.outcomePrices,
-        markets: market.markets,
-        tags: market.tags
-      }));
+      const response = await axios.get('/api/markets');
+      return response.data;
     } catch (error) {
-      console.error('Error fetching markets:', error);
+      console.error('Error fetching events:', error);
       return [];
+    }
+  },
+
+  async getEventBySlug(slug: string): Promise<Event | null> {
+    try {
+      const response = await axios.get(`/api/events/${slug}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching event:', error);
+      return null;
     }
   }
 }; 
