@@ -111,7 +111,7 @@ function EventsList() {
                     {(() => {
                       try {
                         const outcomes = JSON.parse(event.markets[0].outcomes);
-                        const prices = JSON.parse(event.markets[0].outcomePrices);
+                        const prices = event.markets[0].outcomePrices ? JSON.parse(event.markets[0].outcomePrices) : [];
 
                         if (!Array.isArray(outcomes) || !Array.isArray(prices)) {
                           return <span className="text-gray-500">No odds available</span>;
